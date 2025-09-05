@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { ExternalLink, MapPin, Clock, DollarSign, Star, CheckCircle } from 'lucide-react';
+import { ExternalLink, MapPin, Clock, DollarSign, Star, CheckCircle, CreditCard } from 'lucide-react';
 import { Gig, Application } from '@/lib/types';
 import { formatRelativeTime, formatRate, truncateText } from '@/lib/utils';
 import { PLATFORM_COLORS, STATUS_COLORS } from '@/lib/constants';
+import { PaymentModal } from './PaymentModal';
+import { PaymentRequest } from '@/lib/hooks/usePayments';
 
 interface GigCardProps {
   gig: Gig;
@@ -22,6 +24,7 @@ export function GigCard({
   application 
 }: GigCardProps) {
   const [isApplying, setIsApplying] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const handleApply = async () => {
     if (!onApply || isApplying) return;
@@ -38,7 +41,30 @@ export function GigCard({
     window.open(gig.url, '_blank', 'noopener,noreferrer');
   };
 
+  const handlePayForGig = () => {
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = (transactionHash: string) => {
+    console.log('Payment successful:', transactionHash);
+    // Here you could update the gig status, show a success message, etc.
+    setShowPaymentModal(false);
+  };
+
+  const handlePaymentError = (error: string) => {
+    console.error('Payment failed:', error);
+    // Here you could show an error message to the user
+  };
+
   const isApplied = variant === 'applied' || application;
+
+  // Create payment request for this gig
+  const paymentRequest: PaymentRequest = {
+    amount: gig.rate?.min || 50, // Use minimum rate or default to $50
+    recipient: '0x742d35Cc6634C0532925a3b8D0C9C0C0C0C0C0C0', // Demo recipient address
+    description: `Payment for: ${gig.title}`,
+    gigId: gig.id,
+  };
 
   return (
     <div className="card hover:shadow-hover transition-all duration-200 animate-fade-in">
@@ -161,6 +187,15 @@ export function GigCard({
             {isApplying ? 'Applying...' : 'Apply Now'}
           </button>
         )}
+
+        {/* Payment Button */}
+        <button
+          onClick={handlePayForGig}
+          className="flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
+        >
+          <CreditCard className="w-4 h-4" />
+          <span>Pay</span>
+        </button>
         
         {onViewDetails && (
           <button
@@ -171,6 +206,15 @@ export function GigCard({
           </button>
         )}
       </div>
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        paymentRequest={paymentRequest}
+        onSuccess={handlePaymentSuccess}
+        onError={handlePaymentError}
+      />
     </div>
   );
 }
