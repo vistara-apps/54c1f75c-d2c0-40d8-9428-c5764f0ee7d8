@@ -304,7 +304,9 @@ export default function HomePage() {
             setUser(prev => ({
               ...prev,
               notificationSettings: {
-                ...prev.notificationSettings,
+                emailAlerts: prev.notificationSettings?.emailAlerts ?? true,
+                pushNotifications: prev.notificationSettings?.pushNotifications ?? true,
+                alertFrequency: prev.notificationSettings?.alertFrequency ?? 'immediate',
                 farcasterNotifications: enabled,
               },
             }));
