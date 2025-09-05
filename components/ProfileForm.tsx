@@ -62,6 +62,11 @@ export function ProfileForm({ user, variant = 'edit', onSave, onCancel }: Profil
     setFormData(prev => ({
       ...prev,
       preferences: {
+        location: prev.preferences?.location,
+        minRate: prev.preferences?.minRate,
+        maxRate: prev.preferences?.maxRate,
+        workType: prev.preferences?.workType || 'remote',
+        availability: prev.preferences?.availability || 'part-time',
         ...prev.preferences,
         [key]: value,
       },
@@ -72,6 +77,10 @@ export function ProfileForm({ user, variant = 'edit', onSave, onCancel }: Profil
     setFormData(prev => ({
       ...prev,
       notificationSettings: {
+        emailAlerts: prev.notificationSettings?.emailAlerts || false,
+        pushNotifications: prev.notificationSettings?.pushNotifications || false,
+        farcasterNotifications: prev.notificationSettings?.farcasterNotifications || false,
+        alertFrequency: prev.notificationSettings?.alertFrequency || 'immediate',
         ...prev.notificationSettings,
         [key]: value,
       },

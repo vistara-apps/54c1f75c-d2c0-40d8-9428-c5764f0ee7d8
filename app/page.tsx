@@ -6,6 +6,7 @@ import { AppShell } from '@/components/AppShell';
 import { GigCard } from '@/components/GigCard';
 import { ProfileForm } from '@/components/ProfileForm';
 import { NotificationToggle } from '@/components/NotificationToggle';
+import { PaymentTest } from '@/components/PaymentTest';
 import { Gig, User, Application } from '@/lib/types';
 import { calculateMatchScore } from '@/lib/utils';
 import { Search, Filter, Plus, TrendingUp, Clock, CheckCircle } from 'lucide-react';
@@ -304,12 +305,17 @@ export default function HomePage() {
             setUser(prev => ({
               ...prev,
               notificationSettings: {
-                ...prev.notificationSettings,
+                emailAlerts: prev.notificationSettings?.emailAlerts || false,
+                pushNotifications: prev.notificationSettings?.pushNotifications || false,
+                alertFrequency: prev.notificationSettings?.alertFrequency || 'immediate',
                 farcasterNotifications: enabled,
               },
             }));
           }}
         />
+
+        {/* Payment Integration Test */}
+        <PaymentTest />
 
         {/* Search and Filters */}
         <div className="space-y-4">
